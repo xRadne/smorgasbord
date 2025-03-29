@@ -1,8 +1,8 @@
 <script lang="ts">
     import type { RecipeListing } from '$lib/types/recipe';
-    import recipeRepository from '$lib/repository/recipe.repository';
 
-    const recipes: RecipeListing[] = recipeRepository.getRecipeListing();
+    export let data: { recipes: RecipeListing[] };
+    const {recipes} = data;
 </script>
 
 <div class="container">

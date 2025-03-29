@@ -1,13 +1,8 @@
 <script lang="ts">
     import type { Recipe } from '$lib/types/recipe';
-    import recipeRepository from '$lib/repository/recipe.repository';
 
-    export let data: { id: string };
-    const recipe: Recipe | undefined = recipeRepository.getRecipeById(Number(data.id));
-
-    if (!recipe) {
-        throw new Error('Recipe not found');
-    }
+    export let data: { recipe: Recipe };
+    const recipe = data.recipe;
 </script>
 
 <div class="container">
