@@ -6,7 +6,7 @@
 </script>
 
 <div class="container">
-    <h1>Våra Recept</h1>
+    <h1>Our Recipes</h1>
     
     <div class="recipe-grid">
         {#each recipes as recipe}
@@ -19,7 +19,7 @@
                         <span class="category">{recipe.category}</span>
                         <span class="difficulty">{recipe.difficulty}</span>
                         <span class="time">{recipe.preparationTime + recipe.cookingTime} min</span>
-                        <span class="servings">{recipe.servings} personer</span>
+                        <span class="servings">{recipe.servings} servings</span>
                     </div>
                 </div>
             </a>

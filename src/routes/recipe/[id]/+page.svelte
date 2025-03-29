@@ -17,18 +17,18 @@
             <h1>{recipe.title}</h1>
             <p class="description">{recipe.description}</p>
             <div class="meta-info">
-                <span>Kategori: {recipe.category}</span>
-                <span>Svårighetsgrad: {recipe.difficulty}</span>
-                <span>Förberedning: {recipe.preparationTime} min</span>
-                <span>Tillagning: {recipe.cookingTime} min</span>
-                <span>Antal personer: {recipe.servings}</span>
+                <span>Category: {recipe.category}</span>
+                <span>Difficulty: {recipe.difficulty}</span>
+                <span>Preparation: {recipe.preparationTime} min</span>
+                <span>Cooking: {recipe.cookingTime} min</span>
+                <span>Servings: {recipe.servings}</span>
             </div>
         </div>
     </div>
 
     <div class="recipe-content">
         <div class="ingredients">
-            <h2>Ingredienser</h2>
+            <h2>Ingredients</h2>
             <ul>
                 {#each recipe.ingredients as ingredient}
                     <li>{ingredient}</li>
@@ -37,7 +37,7 @@
         </div>
 
         <div class="instructions">
-            <h2>Instruktioner</h2>
+            <h2>Instructions</h2>
             <ol>
                 {#each recipe.instructions as instruction, index}
                     <li>
