@@ -6,7 +6,10 @@
 </script>
 
 <div class="container">
-    <h1>Our Recipes</h1>
+    <div class="header">
+        <h1>Our Recipes</h1>
+        <a href="/new" class="new-recipe-btn">Add New Recipe</a>
+    </div>
     
     <div class="recipe-grid">
         {#each recipes as recipe}
@@ -34,10 +37,30 @@
         padding: 2rem;
     }
 
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
     h1 {
         color: #2c3e50;
-        margin-bottom: 2rem;
-        text-align: center;
+        margin: 0;
+    }
+
+    .new-recipe-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.2s;
+    }
+
+    .new-recipe-btn:hover {
+        background-color: #45a049;
     }
 
     .recipe-grid {
