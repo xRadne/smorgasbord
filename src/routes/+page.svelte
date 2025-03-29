@@ -1,197 +1,108 @@
 <script lang="ts">
-    import type { Recipe } from '$lib/types/recipe';
+    import type { RecipeListing } from '$lib/types/recipe';
+    import recipeRepository from '$lib/repository/recipe.repository';
 
-    const exampleRecipe: Recipe = {
-        id: 1,
-        title: 'Klassisk Köttbullar',
-        description: 'Härliga, saftiga köttbullar med gräddsås - en svensk klassiker!',
-        ingredients: [
-            '500g blandfärs',
-            '1 gul lök',
-            '1 ägg',
-            '1 dl mjölk',
-            '2 msk ströbröd',
-            '1 tsk salt',
-            '1/2 tsk svartpeppar',
-            '2 msk smör till stekning',
-            '2 dl grädde',
-            '1 msk vetemjöl',
-            '1 köttbuljongtärning'
-        ],
-        instructions: [
-            'Blanda färs, finhackad lök, ägg, mjölk, ströbröd och kryddor i en bunke.',
-            'Forma till små bullar med våta händer.',
-            'Stek bullarna i smör tills de är gyllenbruna.',
-            'Ta upp bullarna och lägg åt sidan.',
-            'Gör sås genom att fräsa mjöl i smöret, tillsätt grädde och buljong.',
-            'Låt såsen koka upp och tjockna.',
-            'Lägg tillbaka bullarna i såsen och låt allt bli varmt.'
-        ],
-        image: 'https://images.unsplash.com/photo-1519682337058-a94d519337bc',
-        category: 'Huvudrätt',
-        difficulty: 'Medel',
-        preparationTime: 20,
-        cookingTime: 25,
-        servings: 4
-    };
+    const recipes: RecipeListing[] = recipeRepository.getRecipeListing();
 </script>
 
 <div class="container">
-    <div class="recipe-header">
-        <img src={exampleRecipe.image} alt={exampleRecipe.title} class="recipe-image" />
-        <div class="recipe-info">
-            <h1>{exampleRecipe.title}</h1>
-            <p class="description">{exampleRecipe.description}</p>
-            <div class="meta-info">
-                <span>Kategori: {exampleRecipe.category}</span>
-                <span>Svårighetsgrad: {exampleRecipe.difficulty}</span>
-                <span>Förberedning: {exampleRecipe.preparationTime} min</span>
-                <span>Tillagning: {exampleRecipe.cookingTime} min</span>
-                <span>Antal personer: {exampleRecipe.servings}</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="recipe-content">
-        <div class="ingredients">
-            <h2>Ingredienser</h2>
-            <ul>
-                {#each exampleRecipe.ingredients as ingredient}
-                    <li>{ingredient}</li>
-                {/each}
-            </ul>
-        </div>
-
-        <div class="instructions">
-            <h2>Instruktioner</h2>
-            <ol>
-                {#each exampleRecipe.instructions as instruction, index}
-                    <li>
-                        <span class="step-number">{index + 1}</span>
-                        <span class="step-text">{instruction}</span>
-                    </li>
-                {/each}
-            </ol>
-        </div>
+    <h1>Våra Recept</h1>
+    
+    <div class="recipe-grid">
+        {#each recipes as recipe}
+            <a href="/recipe/{recipe.id}" class="recipe-card">
+                <img src={recipe.image} alt={recipe.title} class="recipe-image" />
+                <div class="recipe-content">
+                    <h2>{recipe.title}</h2>
+                    <p class="description">{recipe.description}</p>
+                    <div class="meta-info">
+                        <span class="category">{recipe.category}</span>
+                        <span class="difficulty">{recipe.difficulty}</span>
+                        <span class="time">{recipe.preparationTime + recipe.cookingTime} min</span>
+                        <span class="servings">{recipe.servings} personer</span>
+                    </div>
+                </div>
+            </a>
+        {/each}
     </div>
 </div>
 
 <style>
     .container {
-        max-width: 1000px;
+        max-width: 1200px;
         margin: 0 auto;
         padding: 2rem;
     }
 
-    .recipe-header {
+    h1 {
+        color: #2c3e50;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .recipe-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 2rem;
-        margin-bottom: 3rem;
+    }
+
+    .recipe-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .recipe-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
     .recipe-image {
         width: 100%;
-        height: 400px;
+        height: 200px;
         object-fit: cover;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    .recipe-info {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
+    .recipe-content {
+        padding: 1.5rem;
     }
 
-    h1 {
-        margin: 0;
+    h2 {
+        margin: 0 0 0.5rem 0;
         color: #2c3e50;
+        font-size: 1.25rem;
     }
 
     .description {
-        font-size: 1.1rem;
         color: #666;
-        line-height: 1.6;
+        margin-bottom: 1rem;
+        line-height: 1.5;
     }
 
     .meta-info {
         display: flex;
         flex-wrap: wrap;
-        gap: 1rem;
-        margin-top: 1rem;
+        gap: 0.5rem;
     }
 
     .meta-info span {
         background-color: #f8f9fa;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.9rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.875rem;
         color: #495057;
     }
 
-    .recipe-content {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: 3rem;
-    }
-
-    .ingredients, .instructions {
-        background-color: #fff;
-        padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    h2 {
-        color: #2c3e50;
-        margin-bottom: 1.5rem;
-    }
-
-    ul {
-        list-style: none;
-        padding: 0;
-    }
-
-    li {
-        padding: 0.5rem 0;
-        border-bottom: 1px solid #eee;
-    }
-
-    ol {
-        padding: 0;
-    }
-
-    .instructions li {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
-        border-bottom: none;
-    }
-
-    .step-number {
-        background-color: #4CAF50;
-        color: white;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        flex-shrink: 0;
-    }
-
-    .step-text {
-        line-height: 1.6;
-    }
-
     @media (max-width: 768px) {
-        .recipe-header {
-            grid-template-columns: 1fr;
+        .container {
+            padding: 1rem;
         }
 
-        .recipe-content {
+        .recipe-grid {
             grid-template-columns: 1fr;
         }
     }
