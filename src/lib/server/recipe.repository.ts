@@ -95,6 +95,70 @@ const recipes: Recipe[] = [
         preparationTime: 20,
         cookingTime: 30,
         servings: 2
+    },
+    {
+        id: 4,
+        title: "Shepherd's Pie",
+        description: "A classic Shepherd's Pie recipe that is hearty and comforting.",
+        ingredients: [
+          '500 g ground beef',
+          '1 onion',
+          '1 carrot',
+          '2 cloves of garlic',
+          '1 tbsp tomato paste',
+          '300 ml beef broth',
+          '1 tbsp Worcestershire sauce',
+          'Salt and pepper to taste',
+          '900 g potatoes',
+          '50 g butter',
+          '100 ml milk',
+          '100 g grated cheese'
+        ],
+        instructions: [
+          'Preheat the oven to 200°C.',
+          'Peel and chop the onion, carrot, and garlic.',
+          'Fry the ground beef in a pan until browned, then add the onion, carrot, and garlic.',
+          'Stir in the tomato paste, beef broth, and Worcestershire sauce. Let simmer for 10 minutes.',
+          'Season with salt and pepper.',
+          'Meanwhile, boil the potatoes until tender, then mash with butter and milk.',
+          'Transfer the meat mixture to a baking dish, top with the mashed potatoes, and sprinkle grated cheese on top.',
+          'Bake in the oven for 20-25 minutes until the top is golden brown.'
+        ],
+        image: 'https://www.ica.se/imagevault/publishedmedia/s33m4cc6hti51bbvsieu/3375-2-shepherds-pie_headersize.jpg',
+        category: 'Main Dish',
+        difficulty: 'Medium',
+        preparationTime: 30,
+        cookingTime: 35,
+        servings: 4
+      },
+      {
+        id: 5,
+        title: "Atole de Elote",
+        description: "A warm and comforting traditional Mexican drink made with corn, milk, sugar, and cinnamon.",
+        ingredients: [
+            "6-8 ears yellow corn",
+            "4-6 cups water",
+            "1/3 cup sugar",
+            "1-2 cups milk",
+            "1/2 teaspoon salt",
+            "Ground cinnamon for garnish"
+        ],
+        instructions: [
+            "Clean corn by removing the leaves and place the ears in a pot of water, then boil for 20-30 minutes.",
+            "Remove corn from water. With a sharp knife, cut the kernels off the ears. Save the boiling water.",
+            "Add cold water to the boiling water to make a total of 6-8 cups. Add the corn. If the mixture is too thick, add more water.",
+            "Bring the corn and water back to a boil.",
+            "Add sugar and cinnamon.",
+            "Separately, boil the milk.",
+            "Once the milk begins to boil, slowly add it to the corn mixture and stir.",
+            "Let cool before serving warm."
+        ],
+        image: "https://example.com/atole-de-elote.jpg",
+        category: "Beverage",
+        difficulty: "Easy",
+        preparationTime: 15,
+        cookingTime: 30,
+        servings: 4
     }
 ];
 
