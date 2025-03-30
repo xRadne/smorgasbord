@@ -1,38 +1,46 @@
-# sv
+# Smörgåsbord
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Smörgåsbord is a place to organize your recipes regardless of origin. Upload a photo, an URL or an unorganized text, then Smörgåsbord will turn it into a searchable collection.
 
-## Creating a project
+## Getting Started
 
-If you're seeing this, you've probably already done this step. Congrats!
+### Prerequisites
+- Node.js (version 18 or higher)
+- Yarn (package manager)
+- OpenAI API key
 
+### Installation
+
+1. Clone the repository:
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+git clone https://github.com/yourusername/smorgasbord.git
+cd smorgasbord
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
+2. Install dependencies:
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+yarn install
 ```
 
-## Building
-
-To create a production version of your app:
-
+3. Create a `.env` file in the root directory and add your OpenAI API key:
 ```bash
-npm run build
+OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-You can preview the production build with `npm run preview`.
+4. Start the development server:
+```bash
+yarn dev
+```
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+### Features
+- Import recipes from URLs
+- Upload recipe photos
+- Convert unorganized text into structured recipes
+- Search through your recipe collection
+- Beautiful, responsive interface
+
+### Development
+- Built with SvelteKit
+- Uses OpenAI's GPT models for recipe extraction
+- Modern, responsive design
+- TypeScript for type safety
