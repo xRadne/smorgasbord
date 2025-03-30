@@ -36,7 +36,7 @@ export class RecipeListing {
   servings: number
 }
 
-export class Recipe extends RecipeListing {
+export class RecipeEntity extends RecipeListing {
   @IsArray()
   @IsString({ each: true })
   @IsNotEmpty()
@@ -48,4 +48,4 @@ export class Recipe extends RecipeListing {
   instructions: string[]
 }
 
-export type OpenAIRecipeResponseDto = Omit<Recipe, 'id'>
+export type OpenAIRecipeResponseDto = Omit<RecipeEntity, 'id'>

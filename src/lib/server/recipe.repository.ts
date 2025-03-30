@@ -1,6 +1,6 @@
-import type { Recipe, RecipeListing } from '../types/recipe'
+import type { RecipeEntity, RecipeListing } from '../types/recipe'
 
-const recipes: Recipe[] = [
+const recipes: RecipeEntity[] = [
   {
     id: 1,
     title: 'Classic Meatballs',
@@ -165,13 +165,13 @@ const recipes: Recipe[] = [
 ]
 
 class RecipeRepository {
-  private recipes: Recipe[] = []
+  private recipes: RecipeEntity[] = []
 
   constructor() {
     this.recipes = recipes
   }
 
-  getRecipeById(id: number): Recipe | undefined {
+  getRecipeById(id: number): RecipeEntity | undefined {
     return this.recipes.find((recipe) => recipe.id === id)
   }
 
@@ -189,11 +189,11 @@ class RecipeRepository {
     }))
   }
 
-  add(recipe: Recipe): void {
+  add(recipe: RecipeEntity): void {
     this.recipes.push(recipe)
   }
 
-  updateById(id: number, recipe: Recipe): void {
+  updateById(id: number, recipe: RecipeEntity): void {
     const index = this.recipes.findIndex((r) => r.id === id)
     if (index !== -1) {
       this.recipes[index] = recipe
