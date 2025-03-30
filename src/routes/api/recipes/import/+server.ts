@@ -12,7 +12,7 @@ const openai = new OpenAI({
     apiKey: OPENAI_API_KEY
 });
 
-const exampleResponseObjectString = JSON.stringify({
+const exampleResponseObject: Omit<Recipe, 'id'> = {
     title: "Example Recipe",
     description: "A delicious example recipe",
     ingredients: [
@@ -27,10 +27,12 @@ const exampleResponseObjectString = JSON.stringify({
     image: "https://example.com/recipe-image.jpg",
     category: "Dessert",
     difficulty: "Easy",
-    preparationTime: 15,
-    cookingTime: 30,
+    preparationTimeMinutes: 15,
+    cookingTimeMinutes: 30,
     servings: 4
-});
+};
+
+const exampleResponseObjectString = JSON.stringify(exampleResponseObject);
 
 export const POST: RequestHandler = async ({ request }) => {
     const { url } = await request.json();

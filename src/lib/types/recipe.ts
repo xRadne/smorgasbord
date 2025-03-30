@@ -1,15 +1,6 @@
-export type Recipe = {
-  id: number
-  title: string
-  description: string
+export type Recipe = RecipeListing & {
   ingredients: string[]
   instructions: string[]
-  image: string
-  category: string
-  difficulty: string
-  preparationTime: number
-  cookingTime: number
-  servings: number
 }
 
 export type RecipeListing = {
@@ -19,7 +10,7 @@ export type RecipeListing = {
   image: string
   category: string
   difficulty: string
-  preparationTime: number
-  cookingTime: number
+  preparationTimeMinutes: number
+  cookingTimeMinutes: number
   servings: number
 }

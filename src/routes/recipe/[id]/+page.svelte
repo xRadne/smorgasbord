@@ -14,7 +14,7 @@
             <div class="meta-info">
                 <span>Category: {recipe.category}</span>
                 <span>Difficulty: {recipe.difficulty}</span>
-                <span>Preparation: {recipe.preparationTime} min</span>
+                <span>Preparation: {recipe.preparationTimeMinutes} min</span>
                 <span>Cooking: {recipe.cookingTime} min</span>
                 <span>Servings: {recipe.servings}</span>
             </div>

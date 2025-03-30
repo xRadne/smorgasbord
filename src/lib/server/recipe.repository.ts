@@ -30,8 +30,8 @@ const recipes: Recipe[] = [
         image: 'https://images.unsplash.com/photo-1519682337058-a94d519337bc',
         category: 'Main Course',
         difficulty: 'Medium',
-        preparationTime: 20,
-        cookingTime: 25,
+        preparationTimeMinutes: 20,
+        cookingTimeMinutes: 25,
         servings: 4
     },
     {
@@ -59,8 +59,8 @@ const recipes: Recipe[] = [
         image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3',
         category: 'Pasta',
         difficulty: 'Medium',
-        preparationTime: 15,
-        cookingTime: 20,
+        preparationTimeMinutes: 15,
+        cookingTimeMinutes: 20,
         servings: 4
     },
     {
@@ -92,8 +92,8 @@ const recipes: Recipe[] = [
         image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd',
         category: 'Vegetarian',
         difficulty: 'Easy',
-        preparationTime: 20,
-        cookingTime: 30,
+        preparationTimeMinutes: 20,
+        cookingTimeMinutes: 30,
         servings: 2
     },
     {
@@ -127,8 +127,8 @@ const recipes: Recipe[] = [
         image: 'https://www.ica.se/imagevault/publishedmedia/s33m4cc6hti51bbvsieu/3375-2-shepherds-pie_headersize.jpg',
         category: 'Main Dish',
         difficulty: 'Medium',
-        preparationTime: 30,
-        cookingTime: 35,
+        preparationTimeMinutes: 30,
+        cookingTimeMinutes: 35,
         servings: 4
       },
       {
@@ -156,8 +156,8 @@ const recipes: Recipe[] = [
         image: "https://example.com/atole-de-elote.jpg",
         category: "Beverage",
         difficulty: "Easy",
-        preparationTime: 15,
-        cookingTime: 30,
+        preparationTimeMinutes: 15,
+        cookingTimeMinutes: 30,
         servings: 4
     }
 ];
@@ -181,8 +181,8 @@ class RecipeRepository {
             image: recipe.image,
             category: recipe.category,
             difficulty: recipe.difficulty,
-            preparationTime: recipe.preparationTime,
-            cookingTime: recipe.cookingTime,
+            preparationTimeMinutes: recipe.preparationTimeMinutes,
+            cookingTimeMinutes: recipe.cookingTimeMinutes,
             servings: recipe.servings
         }));
     }
