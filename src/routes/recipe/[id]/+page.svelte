@@ -2,17 +2,16 @@
   import type { RecipeEntity } from '$lib/types/recipe'
 
   export let data: { recipe: RecipeEntity }
-  const recipe = data.recipe
+  const { recipe } = data
 </script>
 
 <div class="container">
   <div class="recipe-header">
-    <img src={recipe.image} alt={recipe.title} class="recipe-image" />
+    <img src={recipe.imageUrl} alt={recipe.title} class="recipe-image" />
     <div class="recipe-info">
       <h1>{recipe.title}</h1>
       <p class="description">{recipe.description}</p>
       <div class="meta-info">
-        <span>Category: {recipe.category}</span>
         <span>Difficulty: {recipe.difficulty}</span>
         <span>Preparation: {recipe.preparationTimeMinutes} min</span>
         <span>Cooking: {recipe.cookingTimeMinutes} min</span>

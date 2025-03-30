@@ -14,12 +14,11 @@
   <div class="recipe-grid">
     {#each recipes as recipe}
       <a href="/recipe/{recipe.id}" class="recipe-card">
-        <img src={recipe.image} alt={recipe.title} class="recipe-image" />
+        <img src={recipe.imageUrl} alt={recipe.title} class="recipe-image" />
         <div class="recipe-content">
           <h2>{recipe.title}</h2>
           <p class="description">{recipe.description}</p>
           <div class="meta-info">
-            <span class="category">{recipe.category}</span>
             <span class="difficulty">{recipe.difficulty}</span>
             <span class="time">{recipe.preparationTimeMinutes + recipe.cookingTimeMinutes} min</span
             >

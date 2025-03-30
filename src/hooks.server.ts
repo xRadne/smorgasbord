@@ -13,13 +13,13 @@ export const handle: Handle = async ({ event, resolve }) => {
       } = await supabase.auth.getUser(session.access_token)
 
       if (error) {
-        event.cookies.delete('session')
+        event.cookies.delete('session', { path: '/' })
         return resolve(event)
       }
 
       event.locals.user = user
     } catch (error) {
-      event.cookies.delete('session')
+      event.cookies.delete('session', { path: '/' })
     }
   }
 

@@ -1,8 +1,8 @@
 import { IsString, IsNumber, IsArray, IsUrl, Min, IsNotEmpty } from 'class-validator'
 
 export class RecipeListing {
-  @IsNumber()
-  id: number
+  @IsString()
+  id: string
 
   @IsString()
   @IsNotEmpty()
@@ -13,11 +13,7 @@ export class RecipeListing {
   description: string
 
   @IsUrl()
-  image: string
-
-  @IsString()
-  @IsNotEmpty()
-  category: string
+  imageUrl: string
 
   @IsString()
   @IsNotEmpty()
@@ -34,6 +30,26 @@ export class RecipeListing {
   @IsNumber()
   @Min(1)
   servings: number
+
+  constructor(
+    id: string,
+    title: string,
+    description: string,
+    imageUrl: string,
+    difficulty: string,
+    preparationTimeMinutes: number,
+    cookingTimeMinutes: number,
+    servings: number
+  ) {
+    this.id = id
+    this.title = title
+    this.description = description
+    this.imageUrl = imageUrl
+    this.difficulty = difficulty
+    this.preparationTimeMinutes = preparationTimeMinutes
+    this.cookingTimeMinutes = cookingTimeMinutes
+    this.servings = servings
+  }
 }
 
 export class RecipeEntity extends RecipeListing {
