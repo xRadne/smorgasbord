@@ -2,7 +2,6 @@ export class OpenaiRecipe {
   language: string
   title: string
   description: string
-  imageUrl: string
   difficulty: string
   preparationTimeMinutes: number
   cookingTimeMinutes: number
@@ -10,11 +9,10 @@ export class OpenaiRecipe {
   ingredients: string[]
   instructions: string[]
 
-  constructor(language: string, title: string, description: string, imageUrl: string, difficulty: string, preparationTimeMinutes: number, cookingTimeMinutes: number, servings: number, ingredients: string[], instructions: string[]) {
+  constructor(language: string, title: string, description: string, difficulty: string, preparationTimeMinutes: number, cookingTimeMinutes: number, servings: number, ingredients: string[], instructions: string[]) {
     this.language = language
     this.title = title
     this.description = description
-    this.imageUrl = imageUrl
     this.difficulty = difficulty
     this.preparationTimeMinutes = preparationTimeMinutes
     this.cookingTimeMinutes = cookingTimeMinutes

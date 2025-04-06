@@ -6,9 +6,12 @@ export class RecipeService {
     constructor(private readonly recipeParser: IRecipeParser) {}
 
     async createRecipeFromUrl(url: string): Promise<RecipeResponseDto> {
+        throw new Error('Not implemented')
         try {
             const recipeData = await this.recipeParser.extractRecipeFromUrl(url)
-            return await recipeRepository.createRecipe(recipeData)
+            const recipe = Object.assign(recipeData, { imageUrl: '' })
+
+            return await recipeRepository.createRecipe(recipe)
         } catch (error) {
             console.error('Error creating recipe from URL:', error)
             throw new Error('Failed to create recipe from URL')
@@ -20,8 +23,9 @@ export class RecipeService {
             const imageBuffer = Buffer.from(await image.arrayBuffer())
             const imageUrl = await uploadsRepository.uploadImage(image)
             const recipeData = await this.recipeParser.extractRecipeFromImage(imageBuffer)
-            
-            const recipeEntity = await recipeRepository.createRecipe(recipeData)
+            const recipe = Object.assign(recipeData, { imageUrl })
+
+            const recipeEntity = await recipeRepository.createRecipe(recipe)
             return new RecipeResponseDto(
                 recipeEntity.id,
                 recipeEntity.title,
