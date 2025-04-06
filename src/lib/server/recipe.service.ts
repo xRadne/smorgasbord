@@ -9,28 +9,48 @@ class RecipeService {
     }
   
     async createRecipeFromUrl(url: string): Promise<RecipeEntity> {
-    const recipeData = await openaiService.extractRecipeFromUrl(url)
+        const recipeData = await openaiService.extractRecipeFromUrl(url)
 
-    if (recipeData.error) {
-      throw new Error(recipeData.error)
+        if (recipeData.error) {
+            throw new Error(recipeData.error)
+        }
+
+        const recipe: Omit<RecipeEntity, 'id'> = {
+            title: recipeData.recipe.title,
+            description: recipeData.recipe.description,
+            imageUrl: recipeData.recipe.imageUrl,
+            difficulty: recipeData.recipe.difficulty,
+            preparationTimeMinutes: recipeData.recipe.preparationTimeMinutes,
+            cookingTimeMinutes: recipeData.recipe.cookingTimeMinutes,
+            servings: recipeData.recipe.servings,
+            ingredients: recipeData.recipe.ingredients,
+            instructions: recipeData.recipe.instructions
+        }
+
+        return recipeRepository.createRecipe(recipe)
     }
 
-    const recipe: Omit<RecipeEntity, 'id'> = {
-        title: recipeData.recipe.title,
-        description: recipeData.recipe.description,
-        imageUrl: recipeData.recipe.imageUrl,
-        difficulty: recipeData.recipe.difficulty,
-        preparationTimeMinutes: recipeData.recipe.preparationTimeMinutes,
-        cookingTimeMinutes: recipeData.recipe.cookingTimeMinutes,
-        servings: recipeData.recipe.servings,
-        ingredients: recipeData.recipe.ingredients,
-        instructions: recipeData.recipe.instructions
+    async createRecipeFromImage(imageBuffer: Buffer): Promise<RecipeEntity> {
+        const recipeData = await openaiService.extractRecipeFromImage(imageBuffer)
+
+        if (recipeData.error) {
+            throw new Error(recipeData.error)
+        }
+
+        const recipe: Omit<RecipeEntity, 'id'> = {
+            title: recipeData.recipe.title,
+            description: recipeData.recipe.description,
+            imageUrl: recipeData.recipe.imageUrl,
+            difficulty: recipeData.recipe.difficulty,
+            preparationTimeMinutes: recipeData.recipe.preparationTimeMinutes,
+            cookingTimeMinutes: recipeData.recipe.cookingTimeMinutes,
+            servings: recipeData.recipe.servings,
+            ingredients: recipeData.recipe.ingredients,
+            instructions: recipeData.recipe.instructions
+        }
+
+        return recipeRepository.createRecipe(recipe)
     }
-
-    const recipeEntity = await recipeRepository.createRecipe(recipe)
-
-    return recipeEntity
-  }
 }
 
 const recipeService = new RecipeService()

@@ -1,6 +1,7 @@
 import { OPENAI_API_KEY } from "$env/static/private"
+import { OpenaiRecipe, OpenaiRecipeResponseDto } from "./dto/openai.dto"
 import OpenAI from "openai"
-import type { OpenaiRecipe, OpenaiRecipeResponseDto } from "./dto/openai.dto"
+
 if (!OPENAI_API_KEY) {
   throw new Error('OPENAI_API_KEY environment variable is not set')
 }
@@ -9,40 +10,36 @@ const openai = new OpenAI({
   apiKey: OPENAI_API_KEY
 })
 
-const exampleRecipe: OpenaiRecipe = {
-  title: 'Example Recipe',
-  description: 'A delicious example recipe',
-  ingredients: ['2 cups flour', '1 cup sugar', '2 eggs'],
-  instructions: ['Mix ingredients', 'Bake at 350F'],
-  imageUrl: 'https://example.com/recipe-image.jpg',
-  difficulty: 'Easy',
-  preparationTimeMinutes: 15,
-  cookingTimeMinutes: 30,
-  servings: 4
-}
+const exampleRecipe = new OpenaiRecipe(
+  'english',
+  'Example Recipe',
+  'A delicious example recipe',
+  'https://example.com/recipe-image.jpg',
+  'Easy',
+  15,
+  30,
+  4,
+  ['2 cups flour', '1 cup sugar', '2 eggs'],
+  ['Mix ingredients', 'Bake at 350F']
+)
 
-const exampleSuccessResponseObject: OpenaiRecipeResponseDto = {
-  recipe: exampleRecipe,
-  error: undefined
-}
+const exampleResponseObject = new OpenaiRecipeResponseDto(exampleRecipe)
 
-const exampleErrorResponseObject: OpenaiRecipeResponseDto = {
-  recipe: exampleRecipe,
-  error: 'Could not extract recipe from URL. Could not browse the page. (This message should help the developer to fix the issue)'
-}
-
-const exampleSuccessResponseObjectString = JSON.stringify(exampleSuccessResponseObject)
-const exampleErrorResponseObjectString = JSON.stringify(exampleErrorResponseObject)
+const exampleResponseObjectPrompt = `Use this exact structure: ${JSON.stringify(exampleResponseObject)}`
+const recipeAssistantPrompt = `You are a helpful assistant that analyzes recipe images and extracts recipe information.`
+const mustBeJsonPrompt = `Respond with a JSON object containing the recipe details in a structured format. Do not include any other text or comments in your response. The response should be a valid JSON object. Do not use any "\`\`\`json" or "\`\`\`" in your response.`
+const answerInSameLanguageAsImagePrompt = `Answer in the same language as the image. When responding writing language field use the english name of the language, for example 'swedish', 'french', etc.`
 
 class OpenAIService {
   async extractRecipeFromUrl(url: string): Promise<OpenaiRecipeResponseDto> {
+    throw new Error('Not implemented')
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
-          content: `You are a helpful assistant that analyzes recipe URLs and extracts recipe information. Respond with a JSON object containing the recipe details in a structured format. Use this exact structure for success: ${exampleSuccessResponseObjectString}. Use this exact structure for error: ${exampleErrorResponseObjectString}`
+          content: `${recipeAssistantPrompt}. ${mustBeJsonPrompt}. ${exampleResponseObjectPrompt}. ${answerInSameLanguageAsImagePrompt}`
         },
         {
           role: 'user',
@@ -54,6 +51,41 @@ class OpenAIService {
 
     const recipeData = JSON.parse(completion.choices[0].message.content ?? '')
     console.log('Extracted recipe data:', recipeData)
+
+    return recipeData
+  }
+
+  async extractRecipeFromImage(imageBuffer: Buffer): Promise<OpenaiRecipeResponseDto> {
+    const base64Image = imageBuffer.toString('base64')
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: `${recipeAssistantPrompt}. ${mustBeJsonPrompt}. ${exampleResponseObjectPrompt}. ${answerInSameLanguageAsImagePrompt}`
+        },
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: 'Please analyze this recipe image and extract the recipe information. Include all visible ingredients, instructions, and any other relevant details.'
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Image}`
+              }
+            }
+          ]
+        }
+      ],
+      max_tokens: 1000
+    })
+
+    const recipeData = JSON.parse(completion.choices[0].message.content ?? '')
+    console.log('Extracted recipe data from image:', recipeData)
 
     return recipeData
   }
