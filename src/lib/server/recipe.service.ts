@@ -27,22 +27,25 @@ export class RecipeService {
         }
     }
 
-    async createRecipeFromImage(imageBuffer: Buffer): Promise<RecipeResponseDto> {
+    async createRecipeFromImageFile(image: File): Promise<RecipeResponseDto> {
         try {
+            const imageBuffer = Buffer.from(await image.arrayBuffer())
+            const imageUrl = await uploadsRepository.uploadImage(image)
             const recipeData = await this.recipeParser.extractRecipeFromImage(imageBuffer)
-            const recipeDto = new RecipeResponseDto(
-                crypto.randomUUID(),
-                recipeData.title,
-                recipeData.description,
-                recipeData.imageUrl,
-                recipeData.difficulty,
-                recipeData.preparationTimeMinutes,
-                recipeData.cookingTimeMinutes,
-                recipeData.servings,
-                recipeData.ingredients,
-                recipeData.instructions
+            
+            const recipeEntity = await recipeRepository.createRecipe(recipeData)
+            return new RecipeResponseDto(
+                recipeEntity.id,
+                recipeEntity.title,
+                recipeEntity.description,
+                imageUrl,
+                recipeEntity.difficulty,
+                recipeEntity.preparationTimeMinutes,
+                recipeEntity.cookingTimeMinutes,
+                recipeEntity.servings,
+                recipeEntity.ingredients,
+                recipeEntity.instructions
             )
-            return await recipeRepository.createRecipe(recipeDto)
         } catch (error) {
             console.error('Error creating recipe from image:', error)
             throw new Error('Failed to create recipe from image')
@@ -69,4 +72,5 @@ export class RecipeService {
 // Create a singleton instance with the OpenAI service as the parser
 // import openAIService from './openai.service'
 import openAIService from './openaiMock.service'
+import uploadsRepository from './uploads.repository'
 export default new RecipeService(openAIService)

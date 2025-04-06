@@ -1,5 +1,6 @@
 export class RecipeEntity {
   id: string
+  language: string
   title: string
   description: string
   imageUrl: string
@@ -10,8 +11,9 @@ export class RecipeEntity {
   ingredients: string[]
   instructions: string[]
 
-  constructor(id: string, title: string, description: string, imageUrl: string, difficulty: string, preparationTimeMinutes: number, cookingTimeMinutes: number, servings: number, ingredients: string[], instructions: string[]) {
+  constructor(id: string, language: string, title: string, description: string, imageUrl: string, difficulty: string, preparationTimeMinutes: number, cookingTimeMinutes: number, servings: number, ingredients: string[], instructions: string[]) {
     this.id = id
+    this.language = language
     this.title = title
     this.description = description
     this.imageUrl = imageUrl
