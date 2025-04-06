@@ -1,7 +1,6 @@
 import { OPENAI_API_KEY } from "$env/static/private"
-import type { OpenaiRecipeResponseDto } from "$lib"
 import OpenAI from "openai"
-
+import type { OpenaiRecipe, OpenaiRecipeResponseDto } from "./dto/openai.dto"
 if (!OPENAI_API_KEY) {
   throw new Error('OPENAI_API_KEY environment variable is not set')
 }
@@ -10,7 +9,7 @@ const openai = new OpenAI({
   apiKey: OPENAI_API_KEY
 })
 
-const exampleResponseObject: OpenaiRecipeResponseDto = {
+const exampleRecipe: OpenaiRecipe = {
   title: 'Example Recipe',
   description: 'A delicious example recipe',
   ingredients: ['2 cups flour', '1 cup sugar', '2 eggs'],
@@ -22,16 +21,28 @@ const exampleResponseObject: OpenaiRecipeResponseDto = {
   servings: 4
 }
 
-const exampleResponseObjectString = JSON.stringify(exampleResponseObject)
+const exampleSuccessResponseObject: OpenaiRecipeResponseDto = {
+  recipe: exampleRecipe,
+  error: undefined
+}
+
+const exampleErrorResponseObject: OpenaiRecipeResponseDto = {
+  recipe: exampleRecipe,
+  error: 'Could not extract recipe from URL. Could not browse the page. (This message should help the developer to fix the issue)'
+}
+
+const exampleSuccessResponseObjectString = JSON.stringify(exampleSuccessResponseObject)
+const exampleErrorResponseObjectString = JSON.stringify(exampleErrorResponseObject)
 
 class OpenAIService {
   async extractRecipeFromUrl(url: string): Promise<OpenaiRecipeResponseDto> {
+
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
-          content: `You are a helpful assistant that analyzes recipe URLs and extracts recipe information. Respond with a JSON object containing the recipe details in a structured format. Use this exact structure: ${exampleResponseObjectString}`
+          content: `You are a helpful assistant that analyzes recipe URLs and extracts recipe information. Respond with a JSON object containing the recipe details in a structured format. Use this exact structure for success: ${exampleSuccessResponseObjectString}. Use this exact structure for error: ${exampleErrorResponseObjectString}`
         },
         {
           role: 'user',

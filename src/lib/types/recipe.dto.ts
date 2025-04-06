@@ -1,6 +1,6 @@
 import { IsString, IsNumber, IsArray, IsUrl, Min, IsNotEmpty } from 'class-validator'
 
-export class RecipeListing {
+export class RecipeListingDto {
   @IsString()
   id: string
 
@@ -52,7 +52,7 @@ export class RecipeListing {
   }
 }
 
-export class RecipeEntity extends RecipeListing {
+export class RecipeEntityDto extends RecipeListingDto {
   @IsArray()
   @IsString({ each: true })
   @IsNotEmpty()
@@ -64,4 +64,3 @@ export class RecipeEntity extends RecipeListing {
   instructions: string[]
 }
 
-export type OpenaiRecipeResponseDto = Omit<RecipeEntity, 'id'>

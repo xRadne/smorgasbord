@@ -19,9 +19,13 @@
         throw new Error('Failed to submit URL')
       }
 
+      const { data } = await response.json()
       submitted = true
       url = ''
       error = ''
+      
+      // Redirect to the newly created recipe
+      window.location.href = `/recipe/${data.id}`
     } catch (e) {
       error = 'Failed to submit URL. Please try again.'
     } finally {

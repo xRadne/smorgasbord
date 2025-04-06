@@ -1,27 +1,35 @@
-import { RecipeEntity, type OpenaiRecipeResponseDto } from '$lib'
+import type { OpenaiRecipeResponseDto } from './dto/openai.dto'
+import type { RecipeEntity } from './entity/recipe.entity'
 import openaiService from './openai.service'
 import recipeRepository from './recipe.repository'
 
 class RecipeService {
-  async createRecipeFromUrl(url: string): Promise<OpenaiRecipeResponseDto> {
+    async getRecipeById(id: string): Promise<RecipeEntity> {
+        return recipeRepository.getRecipeById(id)
+    }
+  
+    async createRecipeFromUrl(url: string): Promise<RecipeEntity> {
     const recipeData = await openaiService.extractRecipeFromUrl(url)
 
-
-    const recipe: Omit<RecipeEntity, 'id'> = {
-        title: recipeData.title,
-        description: recipeData.description,
-        imageUrl: recipeData.imageUrl,
-        difficulty: recipeData.difficulty,
-        preparationTimeMinutes: recipeData.preparationTimeMinutes,
-        cookingTimeMinutes: recipeData.cookingTimeMinutes,
-        servings: recipeData.servings,
-        ingredients: recipeData.ingredients,
-        instructions: recipeData.instructions
+    if (recipeData.error) {
+      throw new Error(recipeData.error)
     }
 
-    await recipeRepository.createRecipe(recipe)
+    const recipe: Omit<RecipeEntity, 'id'> = {
+        title: recipeData.recipe.title,
+        description: recipeData.recipe.description,
+        imageUrl: recipeData.recipe.imageUrl,
+        difficulty: recipeData.recipe.difficulty,
+        preparationTimeMinutes: recipeData.recipe.preparationTimeMinutes,
+        cookingTimeMinutes: recipeData.recipe.cookingTimeMinutes,
+        servings: recipeData.recipe.servings,
+        ingredients: recipeData.recipe.ingredients,
+        instructions: recipeData.recipe.instructions
+    }
 
-    return recipeData
+    const recipeEntity = await recipeRepository.createRecipe(recipe)
+
+    return recipeEntity
   }
 }
 

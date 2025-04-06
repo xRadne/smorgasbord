@@ -1,1 +1,1 @@
-export * from './types/recipe'
+export * from './types/recipe.dto'

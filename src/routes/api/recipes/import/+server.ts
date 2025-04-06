@@ -1,4 +1,4 @@
-import { json } from '@sveltejs/kit'
+import { redirect, json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 import openaiService from '$lib/server/openai.service'
 import recipeService from '$lib/server/recipe.service'
@@ -8,8 +8,6 @@ export const POST: RequestHandler = async ({ request }) => {
 
   try {
     const recipeData = await recipeService.createRecipeFromUrl(url)
-
-    console.log('Extracted recipe data:', recipeData)
 
     return json({
       success: true,

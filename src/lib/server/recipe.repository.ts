@@ -1,4 +1,5 @@
-import type { RecipeEntity, RecipeListing } from '../types/recipe'
+import type { RecipeListingDto } from '../types/recipe.dto'
+import type { RecipeEntity } from './entity/recipe.entity'
 import { supabase } from './supabase'
 
 class RecipeRepository {
@@ -12,7 +13,7 @@ class RecipeRepository {
     return data[0]
   }
 
-  async getRecipeListing(): Promise<RecipeListing[]> {
+  async getRecipeListing(): Promise<RecipeListingDto[]> {
     const { data, error } = await supabase
       .from('recipes')
       .select(
@@ -35,12 +36,18 @@ class RecipeRepository {
     }))
   }
 
-  async createRecipe(recipe: Omit<RecipeEntity, 'id'>): Promise<void> {
-    const { error } = await supabase.from('recipes').insert(recipe)
+  async createRecipe(recipe: Omit<RecipeEntity, 'id'>): Promise<RecipeEntity> {
+    const { data, error } = await supabase
+      .from('recipes')
+      .insert(recipe)
+      .select('*')
+      .single()
 
-    if (error) {
+    if (error || !data) {
       throw new Error('Error adding recipe: ' + error?.message)
     }
+
+    return data
   }
 
   async updateById(id: string, recipe: RecipeEntity): Promise<void> {
