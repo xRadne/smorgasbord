@@ -16,7 +16,7 @@ class RecipeRepository {
     const { data, error } = await supabase
       .from('recipes')
       .select(
-        'id, title, description, image_url, difficulty, preparation_time_minutes, cooking_time_minutes, servings'
+        'id, title, description, imageUrl, difficulty, preparationTimeMinutes, cookingTimeMinutes, servings'
       )
 
     if (error) {
@@ -27,24 +27,20 @@ class RecipeRepository {
       id: recipe.id,
       title: recipe.title,
       description: recipe.description,
-      imageUrl: recipe.image_url,
+      imageUrl: recipe.imageUrl,
       difficulty: recipe.difficulty,
-      preparationTimeMinutes: recipe.preparation_time_minutes,
-      cookingTimeMinutes: recipe.cooking_time_minutes,
+      preparationTimeMinutes: recipe.preparationTimeMinutes,
+      cookingTimeMinutes: recipe.cookingTimeMinutes,
       servings: recipe.servings
     }))
   }
 
-  async createRecipe(recipe: Omit<RecipeEntity, 'id'>): Promise<string> {
-    const { data, error } = await supabase.from('recipes').insert(recipe)
+  async createRecipe(recipe: Omit<RecipeEntity, 'id'>): Promise<void> {
+    const { error } = await supabase.from('recipes').insert(recipe)
 
-    if (error || !data) {
-      throw new Error('Error adding recipe:' + error?.message)
+    if (error) {
+      throw new Error('Error adding recipe: ' + error?.message)
     }
-
-    console.log('Recipe added:', data)
-
-    return data[0]
   }
 
   async updateById(id: string, recipe: RecipeEntity): Promise<void> {
