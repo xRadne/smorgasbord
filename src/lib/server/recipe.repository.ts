@@ -1,9 +1,8 @@
-import type { RecipeListingDto } from '../types/recipe.dto'
-import type { RecipeEntity } from './entity/recipe.entity'
+import type { RecipeListingDto, RecipeEntityDto } from '../types/recipe.dto'
 import { supabase } from './supabase'
 
 class RecipeRepository {
-  async getRecipeById(id: string): Promise<RecipeEntity> {
+  async getRecipeById(id: string): Promise<RecipeEntityDto> {
     const { data, error } = await supabase.from('recipes').select('*').eq('id', id)
 
     if (error || !data || data.length === 0) {
@@ -36,7 +35,7 @@ class RecipeRepository {
     }))
   }
 
-  async createRecipe(recipe: Omit<RecipeEntity, 'id'>): Promise<RecipeEntity> {
+  async createRecipe(recipe: Omit<RecipeEntityDto, 'id'>): Promise<RecipeEntityDto> {
     const { data, error } = await supabase
       .from('recipes')
       .insert(recipe)
@@ -50,22 +49,28 @@ class RecipeRepository {
     return data
   }
 
-  async updateById(id: string, recipe: RecipeEntity): Promise<void> {
-    const { data, error } = await supabase.from('recipes').update(recipe).eq('id', id)
+  async updateById(id: string, recipe: Partial<RecipeEntityDto>): Promise<RecipeEntityDto> {
+    const { data, error } = await supabase
+      .from('recipes')
+      .update(recipe)
+      .eq('id', id)
+      .select('*')
+      .single()
 
-    if (error) {
-      throw new Error('Error updating recipe:' + error.message)
+    if (error || !data) {
+      throw new Error('Error updating recipe: ' + error?.message)
     }
+
+    return data
   }
 
   async deleteById(id: string): Promise<void> {
     const { error } = await supabase.from('recipes').delete().eq('id', id)
 
     if (error) {
-      throw new Error('Error deleting recipe:' + error.message)
+      throw new Error('Error deleting recipe: ' + error.message)
     }
   }
 }
 
-const recipeRepository = new RecipeRepository()
-export default recipeRepository
+export default new RecipeRepository()

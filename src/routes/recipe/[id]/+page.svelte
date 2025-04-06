@@ -9,7 +9,10 @@
   <div class="recipe-header">
     <img src={recipe.imageUrl} alt={recipe.title} class="recipe-image" />
     <div class="recipe-info">
-      <h1>{recipe.title}</h1>
+      <div class="title-row">
+        <h1>{recipe.title}</h1>
+        <a href="/recipe/{recipe.id}/edit" class="edit-button">Edit Recipe</a>
+      </div>
       <p class="description">{recipe.description}</p>
       <div class="meta-info">
         <span>Difficulty: {recipe.difficulty}</span>
@@ -72,9 +75,30 @@
     gap: 1rem;
   }
 
+  .title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
   h1 {
     margin: 0;
     color: #2c3e50;
+  }
+
+  .edit-button {
+    padding: 0.5rem 1rem;
+    background-color: #4caf50;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .edit-button:hover {
+    background-color: #45a049;
   }
 
   .description {
