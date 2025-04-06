@@ -8,19 +8,7 @@ export class RecipeService {
     async createRecipeFromUrl(url: string): Promise<RecipeResponseDto> {
         try {
             const recipeData = await this.recipeParser.extractRecipeFromUrl(url)
-            const recipeDto = new RecipeResponseDto(
-                crypto.randomUUID(),
-                recipeData.title,
-                recipeData.description,
-                recipeData.imageUrl,
-                recipeData.difficulty,
-                recipeData.preparationTimeMinutes,
-                recipeData.cookingTimeMinutes,
-                recipeData.servings,
-                recipeData.ingredients,
-                recipeData.instructions
-            )
-            return await recipeRepository.createRecipe(recipeDto)
+            return await recipeRepository.createRecipe(recipeData)
         } catch (error) {
             console.error('Error creating recipe from URL:', error)
             throw new Error('Failed to create recipe from URL')
