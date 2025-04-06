@@ -1,7 +1,8 @@
 <script lang="ts">
-  import type { RecipeEntityDto } from '$lib/types/recipe.dto'
+  import type { RecipeResponseDto } from '$lib/types/recipe.dto'
 
-  export let data: { recipe: RecipeEntityDto }
+  export let data: { recipe: RecipeResponseDto }
+
   const { recipe } = data
 </script>
 

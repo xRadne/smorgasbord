@@ -1,14 +1,14 @@
-import { RecipeEntityDto, type RecipeListingDto } from '$lib/types/recipe.dto'
+import { RecipeResponseDto, type RecipeListingDto } from '$lib/types/recipe.dto'
 import type { IRecipeParser } from './interfaces/recipeParser.interface'
 import recipeRepository from './recipe.repository'
 
 export class RecipeService {
     constructor(private readonly recipeParser: IRecipeParser) {}
 
-    async createRecipeFromUrl(url: string): Promise<RecipeEntityDto> {
+    async createRecipeFromUrl(url: string): Promise<RecipeResponseDto> {
         try {
             const recipeData = await this.recipeParser.extractRecipeFromUrl(url)
-            const recipeDto = new RecipeEntityDto(
+            const recipeDto = new RecipeResponseDto(
                 crypto.randomUUID(),
                 recipeData.title,
                 recipeData.description,
@@ -27,10 +27,10 @@ export class RecipeService {
         }
     }
 
-    async createRecipeFromImage(imageBuffer: Buffer): Promise<RecipeEntityDto> {
+    async createRecipeFromImage(imageBuffer: Buffer): Promise<RecipeResponseDto> {
         try {
             const recipeData = await this.recipeParser.extractRecipeFromImage(imageBuffer)
-            const recipeDto = new RecipeEntityDto(
+            const recipeDto = new RecipeResponseDto(
                 crypto.randomUUID(),
                 recipeData.title,
                 recipeData.description,
@@ -49,7 +49,7 @@ export class RecipeService {
         }
     }
 
-    async getRecipeById(id: string): Promise<RecipeEntityDto> {
+    async getRecipeById(id: string): Promise<RecipeResponseDto> {
         return await recipeRepository.getRecipeById(id)
     }
 
@@ -57,7 +57,7 @@ export class RecipeService {
         return await recipeRepository.getRecipeListing()
     }
 
-    async updateRecipe(id: string, recipe: Partial<RecipeEntityDto>): Promise<RecipeEntityDto> {
+    async updateRecipe(id: string, recipe: Partial<RecipeResponseDto>): Promise<RecipeResponseDto> {
         return await recipeRepository.updateById(id, recipe)
     }
 

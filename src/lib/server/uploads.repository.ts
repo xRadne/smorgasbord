@@ -4,23 +4,22 @@ class UploadsRepository {
   private readonly BUCKET_NAME = 'uploaded-images'
 
   /**
-   * Uploads an image buffer to Supabase storage
-   * @param buffer The image data as a Buffer
-   * @param originalFilename The original filename (used to determine file extension)
+   * Uploads a file to Supabase storage
+   * @param file The file to upload
    * @param fileName Optional custom filename. If not provided, a UUID will be generated
-   * @returns The public URL of the uploaded image
+   * @returns The public URL of the uploaded file
    */
-  async uploadImage(buffer: Buffer, originalFilename: string, fileName?: string): Promise<string> {
+  async uploadImage(file: File, fileName?: string): Promise<string> {
     try {
-      const fileExt = originalFilename.split('.').pop()
+      const fileExt = file.name.split('.').pop()
       const filePath = fileName 
         ? `${fileName}.${fileExt}`
         : `${crypto.randomUUID()}.${fileExt}`
 
       const { error: uploadError } = await supabase.storage
         .from(this.BUCKET_NAME)
-        .upload(filePath, buffer, {
-          contentType: `image/${fileExt}`,
+        .upload(filePath, file, {
+          contentType: file.type,
           upsert: false
         })
 

@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import type { RecipeEntityDto } from '$lib/types/recipe.dto'
+import type { RecipeResponseDto } from '$lib/types/recipe.dto'
 import recipeRepository from '$lib/server/recipe.repository'
 
 export const GET: RequestHandler = async ({ params }) => {
@@ -15,7 +15,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
 export const PUT: RequestHandler = async ({ params, request }) => {
   try {
-    const recipeData = await request.json() as Partial<RecipeEntityDto>
+    const recipeData = await request.json() as Partial<RecipeResponseDto>
     const updatedRecipe = await recipeRepository.updateById(params.id, recipeData)
 
     return json({

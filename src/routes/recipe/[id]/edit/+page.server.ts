@@ -1,10 +1,10 @@
 import { error } from '@sveltejs/kit'
-import recipeRepository from '$lib/server/recipe.repository'
+import recipeService from '$lib/server/recipe.service'
 import type { PageServerLoad } from '../$types'
 
 export const load: PageServerLoad = async ({ params }) => {
   try {
-    const recipe = await recipeRepository.getRecipeById(params.id)
+    const recipe = await recipeService.getRecipeById(params.id)
 
     if (!recipe) {
       throw error(404, 'Recipe not found')

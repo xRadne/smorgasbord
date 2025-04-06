@@ -1,8 +1,8 @@
 import type { PageServerLoad } from './$types'
-import recipeRepository from '$lib/server/recipe.repository'
+import recipeService from '$lib/server/recipe.service'
 
 export const load: PageServerLoad = async () => {
-  const recipes = await recipeRepository.getRecipeListing()
+  const recipes = await recipeService.getRecipeListing()
 
   return {
     recipes
