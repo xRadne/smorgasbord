@@ -1,6 +1,7 @@
 import { OPENAI_API_KEY } from "$env/static/private"
 import { OpenaiRecipe, OpenaiRecipeResponseDto } from "./dto/openai.dto"
 import OpenAI from "openai"
+import type { IRecipeParser } from "./interfaces/recipeParser.interface"
 
 if (!OPENAI_API_KEY) {
   throw new Error('OPENAI_API_KEY environment variable is not set')
@@ -30,8 +31,8 @@ const recipeAssistantPrompt = `You are a helpful assistant that analyzes recipe 
 const mustBeJsonPrompt = `Respond with a JSON object containing the recipe details in a structured format. Do not include any other text or comments in your response. The response should be a valid JSON object. Do not use any "\`\`\`json" or "\`\`\`" in your response.`
 const answerInSameLanguageAsImagePrompt = `Answer in the same language as the image. When responding writing language field use the english name of the language, for example 'swedish', 'french', etc.`
 
-class OpenAIService {
-  async extractRecipeFromUrl(url: string): Promise<OpenaiRecipeResponseDto> {
+class OpenAIService implements IRecipeParser {
+  async extractRecipeFromUrl(url: string): Promise<OpenaiRecipe> {
     throw new Error('Not implemented')
 
     const completion = await openai.chat.completions.create({
@@ -49,13 +50,11 @@ class OpenAIService {
       response_format: { type: 'json_object' }
     })
 
-    const recipeData = JSON.parse(completion.choices[0].message.content ?? '')
-    console.log('Extracted recipe data:', recipeData)
-
-    return recipeData
+    const responseData = JSON.parse(completion.choices[0].message.content ?? '') as OpenaiRecipeResponseDto
+    return responseData.recipe
   }
 
-  async extractRecipeFromImage(imageBuffer: Buffer): Promise<OpenaiRecipeResponseDto> {
+  async extractRecipeFromImage(imageBuffer: Buffer): Promise<OpenaiRecipe> {
     const base64Image = imageBuffer.toString('base64')
 
     const completion = await openai.chat.completions.create({
@@ -84,12 +83,14 @@ class OpenAIService {
       max_tokens: 1000
     })
 
-    const recipeData = JSON.parse(completion.choices[0].message.content ?? '')
-    console.log('Extracted recipe data from image:', recipeData)
+    const responseData = JSON.parse(completion.choices[0].message.content ?? '') as OpenaiRecipeResponseDto
 
-    return recipeData
+    if (!responseData.recipe) {
+      throw new Error('No recipe found in the response')
+    }
+
+    return responseData.recipe
   }
 }
 
-const openaiService = new OpenAIService()
-export default openaiService
+export default new OpenAIService()

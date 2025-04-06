@@ -62,5 +62,21 @@ export class RecipeEntityDto extends RecipeListingDto {
   @IsString({ each: true })
   @IsNotEmpty()
   instructions: string[]
-}
 
+  constructor(
+    id: string,
+    title: string,
+    description: string,
+    imageUrl: string,
+    difficulty: string,
+    preparationTimeMinutes: number,
+    cookingTimeMinutes: number,
+    servings: number,
+    ingredients: string[],
+    instructions: string[]
+  ) {
+    super(id, title, description, imageUrl, difficulty, preparationTimeMinutes, cookingTimeMinutes, servings)
+    this.ingredients = ingredients
+    this.instructions = instructions
+  }
+}

@@ -1,61 +1,72 @@
-import type { OpenaiRecipeResponseDto } from './dto/openai.dto'
-import type { RecipeEntity } from './entity/recipe.entity'
-import openaiService from './openai.service'
+import { RecipeEntityDto, type RecipeListingDto } from '$lib/types/recipe.dto'
+import type { IRecipeParser } from './interfaces/recipeParser.interface'
 import recipeRepository from './recipe.repository'
-import uploadsRepository from './uploads.repository'
 
-class RecipeService {
-    async getRecipeById(id: string): Promise<RecipeEntity> {
-        return recipeRepository.getRecipeById(id)
-    }
-  
-    async createRecipeFromUrl(url: string): Promise<RecipeEntity> {
-        const recipeData = await openaiService.extractRecipeFromUrl(url)
+export class RecipeService {
+    constructor(private readonly recipeParser: IRecipeParser) {}
 
-        if (recipeData.error) {
-            throw new Error(recipeData.error)
+    async createRecipeFromUrl(url: string): Promise<RecipeEntityDto> {
+        try {
+            const recipeData = await this.recipeParser.extractRecipeFromUrl(url)
+            const recipeDto = new RecipeEntityDto(
+                crypto.randomUUID(),
+                recipeData.title,
+                recipeData.description,
+                recipeData.imageUrl,
+                recipeData.difficulty,
+                recipeData.preparationTimeMinutes,
+                recipeData.cookingTimeMinutes,
+                recipeData.servings,
+                recipeData.ingredients,
+                recipeData.instructions
+            )
+            return await recipeRepository.createRecipe(recipeDto)
+        } catch (error) {
+            console.error('Error creating recipe from URL:', error)
+            throw new Error('Failed to create recipe from URL')
         }
-
-        const recipe: Omit<RecipeEntity, 'id'> = {
-            title: recipeData.recipe.title,
-            description: recipeData.recipe.description,
-            imageUrl: recipeData.recipe.imageUrl,
-            difficulty: recipeData.recipe.difficulty,
-            preparationTimeMinutes: recipeData.recipe.preparationTimeMinutes,
-            cookingTimeMinutes: recipeData.recipe.cookingTimeMinutes,
-            servings: recipeData.recipe.servings,
-            ingredients: recipeData.recipe.ingredients,
-            instructions: recipeData.recipe.instructions
-        }
-
-        return recipeRepository.createRecipe(recipe)
     }
 
-    async createRecipeFromImageFile(image: File): Promise<RecipeEntity> {
-        const imageBuffer = Buffer.from(await image.arrayBuffer())
-
-        const imageUrl = await uploadsRepository.uploadImage(imageBuffer, image.name)
-        const recipeData = await openaiService.extractRecipeFromImage(imageBuffer)
-
-        if (recipeData.error) {
-            throw new Error(recipeData.error)
+    async createRecipeFromImage(imageBuffer: Buffer): Promise<RecipeEntityDto> {
+        try {
+            const recipeData = await this.recipeParser.extractRecipeFromImage(imageBuffer)
+            const recipeDto = new RecipeEntityDto(
+                crypto.randomUUID(),
+                recipeData.title,
+                recipeData.description,
+                recipeData.imageUrl,
+                recipeData.difficulty,
+                recipeData.preparationTimeMinutes,
+                recipeData.cookingTimeMinutes,
+                recipeData.servings,
+                recipeData.ingredients,
+                recipeData.instructions
+            )
+            return await recipeRepository.createRecipe(recipeDto)
+        } catch (error) {
+            console.error('Error creating recipe from image:', error)
+            throw new Error('Failed to create recipe from image')
         }
+    }
 
-        const recipe: Omit<RecipeEntity, 'id'> = {
-            title: recipeData.recipe.title,
-            description: recipeData.recipe.description,
-            imageUrl: imageUrl,
-            difficulty: recipeData.recipe.difficulty,
-            preparationTimeMinutes: recipeData.recipe.preparationTimeMinutes,
-            cookingTimeMinutes: recipeData.recipe.cookingTimeMinutes,
-            servings: recipeData.recipe.servings,
-            ingredients: recipeData.recipe.ingredients,
-            instructions: recipeData.recipe.instructions
-        }
+    async getRecipeById(id: string): Promise<RecipeEntityDto> {
+        return await recipeRepository.getRecipeById(id)
+    }
 
-        return recipeRepository.createRecipe(recipe)
+    async getRecipeListing(): Promise<RecipeListingDto[]> {
+        return await recipeRepository.getRecipeListing()
+    }
+
+    async updateRecipe(id: string, recipe: Partial<RecipeEntityDto>): Promise<RecipeEntityDto> {
+        return await recipeRepository.updateById(id, recipe)
+    }
+
+    async deleteRecipe(id: string): Promise<void> {
+        await recipeRepository.deleteById(id)
     }
 }
 
-const recipeService = new RecipeService()
-export default recipeService
+// Create a singleton instance with the OpenAI service as the parser
+// import openAIService from './openai.service'
+import openAIService from './openaiMock.service'
+export default new RecipeService(openAIService)
