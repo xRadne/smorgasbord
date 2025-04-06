@@ -2,9 +2,11 @@
   let url = ''
   let submitted = false
   let error = ''
+  let loading = false
 
   async function handleSubmit() {
     try {
+      loading = true
       const response = await fetch('/api/recipes/import', {
         method: 'POST',
         headers: {
@@ -22,6 +24,8 @@
       error = ''
     } catch (e) {
       error = 'Failed to submit URL. Please try again.'
+    } finally {
+      loading = false
     }
   }
 </script>
@@ -49,7 +53,12 @@
       <p class="success">URL submitted successfully!</p>
     {/if}
 
-    <button type="submit">Import Recipe</button>
+    <button type="submit" disabled={loading} class="submit-button">
+      {#if loading}
+        <span class="spinner"></span>
+      {/if}
+      {loading ? 'Importing...' : 'Import Recipe'}
+    </button>
   </form>
 </div>
 
@@ -121,5 +130,33 @@
   .success {
     color: #28a745;
     margin-bottom: 1rem;
+  }
+
+  .submit-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .spinner {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid transparent;
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
   }
 </style>
