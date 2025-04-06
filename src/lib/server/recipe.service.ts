@@ -2,6 +2,7 @@ import type { OpenaiRecipeResponseDto } from './dto/openai.dto'
 import type { RecipeEntity } from './entity/recipe.entity'
 import openaiService from './openai.service'
 import recipeRepository from './recipe.repository'
+import uploadsRepository from './uploads.repository'
 
 class RecipeService {
     async getRecipeById(id: string): Promise<RecipeEntity> {
@@ -30,7 +31,10 @@ class RecipeService {
         return recipeRepository.createRecipe(recipe)
     }
 
-    async createRecipeFromImage(imageBuffer: Buffer): Promise<RecipeEntity> {
+    async createRecipeFromImageFile(image: File): Promise<RecipeEntity> {
+        const imageBuffer = Buffer.from(await image.arrayBuffer())
+
+        const imageUrl = await uploadsRepository.uploadImage(imageBuffer, image.name)
         const recipeData = await openaiService.extractRecipeFromImage(imageBuffer)
 
         if (recipeData.error) {
@@ -40,7 +44,7 @@ class RecipeService {
         const recipe: Omit<RecipeEntity, 'id'> = {
             title: recipeData.recipe.title,
             description: recipeData.recipe.description,
-            imageUrl: recipeData.recipe.imageUrl,
+            imageUrl: imageUrl,
             difficulty: recipeData.recipe.difficulty,
             preparationTimeMinutes: recipeData.recipe.preparationTimeMinutes,
             cookingTimeMinutes: recipeData.recipe.cookingTimeMinutes,

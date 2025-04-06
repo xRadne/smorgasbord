@@ -20,8 +20,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
     let recipe
     if (image) {
-      const buffer = Buffer.from(await image.arrayBuffer())
-      recipe = await recipeService.createRecipeFromImage(buffer)
+      recipe = await recipeService.createRecipeFromImageFile(image)
     } else if (url) {
       recipe = await recipeService.createRecipeFromUrl(url)
     }
