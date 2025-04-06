@@ -18,6 +18,22 @@
   let loading = false
   let error = ''
   let success = false
+  let imageFile: File | null = null
+  let imagePreview: string | null = null
+
+  function handleImageUpload(event: Event) {
+    const input = event.target as HTMLInputElement
+    if (input.files && input.files[0]) {
+      imageFile = input.files[0]
+      imagePreview = URL.createObjectURL(imageFile)
+    }
+  }
+
+  function removeImage() {
+    imageFile = null
+    imagePreview = null
+    imageUrl = recipe.imageUrl // Reset to original image URL
+  }
 
   function addIngredient() {
     ingredients = [...ingredients, '']
@@ -41,6 +57,24 @@
       error = ''
       success = false
 
+      let finalImageUrl = imageUrl
+      if (imageFile) {
+        const formData = new FormData()
+        formData.append('image', imageFile)
+        
+        const uploadResponse = await fetch('/api/recipes/upload', {
+          method: 'POST',
+          body: formData
+        })
+
+        if (!uploadResponse.ok) {
+          throw new Error('Failed to upload image')
+        }
+
+        const { imageUrl: uploadedImageUrl } = await uploadResponse.json()
+        finalImageUrl = uploadedImageUrl
+      }
+
       const response = await fetch(`/api/recipes/${recipe.id}`, {
         method: 'PUT',
         headers: {
@@ -49,7 +83,7 @@
         body: JSON.stringify({
           title,
           description,
-          imageUrl,
+          imageUrl: finalImageUrl,
           difficulty,
           preparationTimeMinutes,
           cookingTimeMinutes,
@@ -98,6 +132,14 @@
       loading = false
     }
   }
+
+  // Cleanup on component destroy
+  import { onDestroy } from 'svelte'
+  onDestroy(() => {
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview)
+    }
+  })
 </script>
 
 <div class="container">
@@ -122,8 +164,29 @@
     </div>
 
     <div class="form-group">
-      <label for="imageUrl">Image URL</label>
-      <input type="url" id="imageUrl" bind:value={imageUrl} required />
+      <label>Recipe Image</label>
+      <div class="image-upload-container">
+        <div class="image-preview">
+          <img src={imagePreview || imageUrl} alt="Recipe preview" />
+          <div class="image-actions">
+            <label for="image" class="upload-button">
+              Choose New Image
+            </label>
+            {#if imagePreview || imageUrl !== recipe.imageUrl}
+              <button type="button" class="remove-button" on:click={removeImage}>
+                Remove Image
+              </button>
+            {/if}
+          </div>
+        </div>
+        <input
+          type="file"
+          id="image"
+          accept="image/*"
+          on:change={handleImageUpload}
+          class="hidden"
+        />
+      </div>
     </div>
 
     <div class="form-row">
@@ -249,7 +312,11 @@
     font-weight: 500;
   }
 
-  input, textarea, select {
+  input[type="text"],
+  input[type="number"],
+  input[type="url"],
+  textarea,
+  select {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #ddd;
@@ -257,7 +324,9 @@
     font-size: 1rem;
   }
 
-  input:focus, textarea:focus, select:focus {
+  input:focus,
+  textarea:focus,
+  select:focus {
     outline: none;
     border-color: #4caf50;
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
@@ -274,28 +343,82 @@
     gap: 0.5rem;
   }
 
-  .list-item input, .list-item textarea {
+  .list-item input,
+  .list-item textarea {
     flex: 1;
   }
 
-  .add-button {
-    padding: 0.5rem;
-    background: #4caf50;
-    color: white;
+  .add-button,
+  .remove-button,
+  .upload-button {
+    padding: 0.5rem 1rem;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+
+  .add-button {
+    background: #4caf50;
+    color: white;
     margin-top: 0.5rem;
   }
 
+  .add-button:hover {
+    background: #45a049;
+  }
+
   .remove-button {
-    padding: 0.5rem 1rem;
     background: #dc3545;
     color: white;
-    border: none;
+  }
+
+  .remove-button:hover {
+    background: #c82333;
+  }
+
+  .upload-button {
+    background: #4caf50;
+    color: white;
+  }
+
+  .upload-button:hover {
+    background: #45a049;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .image-upload-container {
+    margin: 1rem 0;
+  }
+
+  .image-preview {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .image-preview img {
+    width: 100%;
+    height: auto;
     border-radius: 4px;
-    cursor: pointer;
-    white-space: nowrap;
+    display: block;
+  }
+
+  .image-actions {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.5rem;
+    border-radius: 4px;
   }
 
   .form-actions {
@@ -304,70 +427,86 @@
     margin-top: 2rem;
   }
 
-  .save-button {
-    flex: 1;
-    background-color: #4caf50;
-    color: white;
+  .save-button,
+  .cancel-button {
     padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 4px;
-    font-size: 1rem;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+    font-size: 1rem;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .save-button {
+    background: #4caf50;
+    color: white;
+    flex: 1;
+  }
+
+  .save-button:hover:not(:disabled) {
+    background: #45a049;
+  }
+
+  .save-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
   }
 
   .cancel-button {
-    padding: 0.75rem 1.5rem;
-    background-color: #6c757d;
+    background: #6c757d;
     color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    text-decoration: none;
-    text-align: center;
+  }
+
+  .cancel-button:hover {
+    background: #5a6268;
   }
 
   .delete-button {
     padding: 0.75rem 1.5rem;
-    background-color: #dc3545;
+    background: #dc3545;
     color: white;
     border: none;
     border-radius: 4px;
-    font-size: 1rem;
     cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+  }
+
+  .delete-button:hover:not(:disabled) {
+    background: #c82333;
+  }
+
+  .delete-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
   }
 
   .error {
     color: #dc3545;
-    margin-bottom: 1rem;
+    margin: 1rem 0;
   }
 
   .success {
     color: #28a745;
-    margin-bottom: 1rem;
+    margin: 1rem 0;
   }
 
   .spinner {
+    display: inline-block;
     width: 1rem;
     height: 1rem;
-    border: 2px solid transparent;
-    border-top-color: white;
+    border: 2px solid #fff;
     border-radius: 50%;
+    border-top-color: transparent;
     animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
   }
 
   @keyframes spin {
     to {
       transform: rotate(360deg);
     }
-  }
-
-  button:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
   }
 </style> 
