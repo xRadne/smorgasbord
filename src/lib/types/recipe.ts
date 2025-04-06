@@ -64,4 +64,4 @@ export class RecipeEntity extends RecipeListing {
   instructions: string[]
 }
 
-export type OpenAIRecipeResponseDto = Omit<RecipeEntity, 'id'>
+export type OpenaiRecipeResponseDto = Omit<RecipeEntity, 'id'>

@@ -35,12 +35,16 @@ class RecipeRepository {
     }))
   }
 
-  async add(recipe: RecipeEntity): Promise<void> {
+  async createRecipe(recipe: Omit<RecipeEntity, 'id'>): Promise<string> {
     const { data, error } = await supabase.from('recipes').insert(recipe)
 
-    if (error) {
-      throw new Error('Error adding recipe:' + error.message)
+    if (error || !data) {
+      throw new Error('Error adding recipe:' + error?.message)
     }
+
+    console.log('Recipe added:', data)
+
+    return data[0]
   }
 
   async updateById(id: string, recipe: RecipeEntity): Promise<void> {
