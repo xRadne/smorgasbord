@@ -6,7 +6,6 @@ const mockResponse: OpenaiRecipeResponseDto = {
     language: 'swedish',
     title: 'Salsiccia med champinjoner och pasta',
     description: 'En läcker rätt med salsiccia, champinjoner och pasta.',
-    imageUrl: '',
     difficulty: 'Medium',
     preparationTimeMinutes: 15,
     cookingTimeMinutes: 25,

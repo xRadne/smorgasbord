@@ -65,4 +65,6 @@ export class RecipeService {
 // import openAIService from './openai.service'
 import openAIService from './openaiMock.service'
 import uploadsRepository from './uploads.repository'
-export default new RecipeService(openAIService)
+
+const recipeService = new RecipeService(openAIService)
+export default recipeService
